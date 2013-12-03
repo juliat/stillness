@@ -13,11 +13,15 @@ class Person {
   int timePositionWasLastSampled = 0;
   int timeBetweenSamples = 0;
   int numVelocitiesCaptured = 0;
+  
+  // box2d
+  Body body;
 
   // constructor
   Person() {
     setPosition();
     update();
+    createBox2dObject();
   }
 
   // get data about the person's position
@@ -48,9 +52,7 @@ class Person {
   // and this one to figure out velocity
   void captureVelocity() {
     float distance = getDistance(getCurrentPosition('x'), getCurrentPosition('y'), positionX, positionY);
-    println("capturing s " + distance);
     float velocity = distance/timeBetweenSamples;
-    println("capturing v " + velocity);
     cumulativeVelocity += velocity;
     numVelocitiesCaptured++;
     currentVelocity = velocity;
@@ -60,13 +62,11 @@ class Person {
       // and was moving before
       if (stillnessDuration < 1) {
         // record time
-        println("record time");
         startStillnessTime = millis();
         stillnessDuration = 1;
       // wasn't moving before
       } else {
         // update time since last motion
-        println("get duration");
         stillnessDuration = millis() - startStillnessTime;
       }
     // moving
@@ -93,6 +93,44 @@ class Person {
     println("Velocities Captured " + numVelocitiesCaptured);
     println("Stillness Duration " + stillnessDuration);
     println("Start Stillness Time " + startStillnessTime);
+  }
+  
+  void createBox2dObject() {
+    // set width and height
+    int w = 16;
+    int h = 16;
+
+    // Create a definition of what the box2d body should be
+    BodyDef bodyDefinition = new BodyDef();
+    // "A kinematic body can be moved manually by setting its velocity directly. 
+    // If you have a user-controlled object in your world, you can use a kinematic body"
+    // - http://natureofcode.com/book/chapter-5-physics-libraries/
+    bodyDefinition.type = BodyType.KINEMATIC;
+    // set the position of the Box2D Body by translating x y pixels
+    // to box2D world
+    bodyDefinition.position.set(box2d.coordPixelsToWorld(positionX, positionY));
+    body = box2d.createBody(bodyDefinition); // actually create it
+    
+    // define the shape for the Person
+    PolygonShape shape = new PolygonShape();
+    // in box2d, the width and height are the distance from the center to the edge,
+    // so half of the processing values for width and height
+    float box2dW = box2d.scalarPixelsToWorld(w/2);
+    float box2dH = box2d.scalarPixelsToWorld(h/2);
+
+    shape.setAsBox(box2dW, box2dH);
+
+    // set up a fixture to tie together the body and the shape
+    FixtureDef fixtureDefinition = new FixtureDef();
+    fixtureDefinition.shape = shape;
+
+    // assign physics-related parameters
+    fixtureDefinition.density = 1;
+    fixtureDefinition.friction = 0.3;
+    fixtureDefinition.restitution = 0.5;
+
+    // attach Fixture to Body
+    body.createFixture(fixtureDefinition);
   }
 }
 

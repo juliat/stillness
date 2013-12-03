@@ -22,6 +22,7 @@ void setup() {
   // the global reference variable
   box2d = new PBox2D(this);
   box2d.createWorld();
+  adjustBox2dWorld();
 
   // Create the ArrayList in which we'll put butterflies
   butterflies = new ArrayList<Butterfly>();
@@ -61,6 +62,11 @@ void createButterflies() {
     Butterfly b = new Butterfly(randomX, randomY);
     butterflies.add(b); // add the butterfly to the array
   }
+}
+
+void adjustBox2dWorld() {
+  // no gravity!
+  box2d.setGravity(0, -10);
 }
 
 // helper function to calculate displacement between

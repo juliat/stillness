@@ -19,6 +19,13 @@ class Butterfly {
     bodyDefinition.position.set(box2d.coordPixelsToWorld(x, y));
     body = box2d.createBody(bodyDefinition); // actually create it
 
+    // setup initial linear and angular velocities
+    float randomXVelocity = random(-3,3);
+    float randomYVelocity = random(-10,3);
+    float randomAngularVelocity = random(-3, 3); 
+    body.setLinearVelocity(new Vec2(randomXVelocity, randomYVelocity));
+    body.setAngularVelocity(randomAngularVelocity);
+
     // define the shape for the Butterfly
     PolygonShape shape = new PolygonShape();
     // in box2d, the width and height are the distance from the center to the edge,
