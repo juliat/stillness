@@ -32,11 +32,19 @@ class Person {
     captureVelocity();
     updateAverageVelocity();
     setPosition();
+    
+    // if (stillnessDuration > 0) {
+      attractButterflies();
+    // }
   }
 
   void setPosition() {
     positionX = mouseX;
     positionY = mouseY;
+    
+    // set the position of the Box2D Body by translating x y pixels
+    // to box2D world
+    body.position.set(box2d.coordPixelsToWorld(positionX, positionY));
   }
 
   float getCurrentPosition(char xOrY) {
@@ -64,6 +72,7 @@ class Person {
         // record time
         startStillnessTime = millis();
         stillnessDuration = 1;
+        attractButterflies();
       // wasn't moving before
       } else {
         // update time since last motion
@@ -131,6 +140,34 @@ class Person {
 
     // attach Fixture to Body
     body.createFixture(fixtureDefinition);
+  }
+  
+  void attractButterflies() {
+    for (Butterfly b: butterflies) {
+      Vec2 attractionForce = attract(b); // calculate attraction force for each butterfly
+      b.applyForce(attractionForce); 
+    }
+  }  
+  
+  // returns attraction force to be applied to Butterfly that is passed in
+  Vec2 attract(Butterfly b) {
+    float forceStrength = 100;
+    Vec2 myPosition = body.getWorldCenter();
+    Vec2 bPosition = b.body.getWorldCenter();
+    
+    // create vector pointsing from butterfly to person
+    Vec2 force = myPosition.sub(bPosition);
+    float distance = force.length();
+    
+    // kep the force within bounds
+    distance = constrain(distance, 1, 5);
+    force.normalize();
+    
+    // Calculate gravitional force magnitude
+    float strength = (forceStrength * 1 * b.body.m_mass) / (distance * distance);
+    // get force vector
+    force.mulLocal(strength); // magnitude * direction
+    return force;
   }
 }
 

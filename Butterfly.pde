@@ -47,6 +47,28 @@ class Butterfly {
     // attach Fixture to Body
     body.createFixture(fixtureDefinition);
   } // end constructor
+  
+  void applyForce(Vec2 force) {
+    Vec2 position = body.getWorldCenter(); // ask the body for its center
+    body.applyForce(force, position);
+  }
+
+  void update() {
+    // avoidOthers();
+  }
+  
+ /* void avoidOthers() {
+    for (Butterfly otherB: butterflies) {
+      Vec2 repulsionForce = repel(otherB);
+      otherB.applyForce(repulsionForce);
+    }
+  }
+  
+  Vec2 repel(Butterfly otherButterfly) {
+    // calculate force
+    // adjust based on distance and mass
+    
+  }*/
 
   // draw a butterfly!
   void display() {
@@ -72,5 +94,6 @@ class Butterfly {
 
     popMatrix(); // reset the canvas
   } // end display
+ 
 } // end class  
 

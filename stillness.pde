@@ -43,14 +43,19 @@ void draw() {
   if ((butterflies == null) || (butterflies.size() < 1)) {
     createButterflies();
   }
+  
+  // update butterflies attraction/repulsion to person
+  person.update();
+  person.printDebug();
+  
   // display all the butterflies
   for (Butterfly b: butterflies) {
+    b.update();
     b.display();
   }
 
   // update the Person
-  person.update();
-  person.printDebug();
+
 }
 
 void createButterflies() {
@@ -66,7 +71,7 @@ void createButterflies() {
 
 void adjustBox2dWorld() {
   // no gravity!
-  box2d.setGravity(0, -10);
+  box2d.setGravity(0, 0);
 }
 
 // helper function to calculate displacement between
