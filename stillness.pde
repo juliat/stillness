@@ -8,8 +8,9 @@ import org.jbox2d.dynamics.*;
 
 // create a reference to the box2d world
 PBox2D box2d;
-// make an reference to an arraylist for our Butterfly Objects
+// make an reference to an arraylist for or Butterfly Objects
 ArrayList<Butterfly> butterflies;
+Person person;
 
 void setup() {
   // setup window
@@ -24,17 +25,9 @@ void setup() {
 
   // Create the ArrayList in which we'll put butterflies
   butterflies = new ArrayList<Butterfly>();
-}
 
-void createButterflies() {
-  int numButterflies = 50;
-  for (int i = 0; i < numButterflies; i++) {
-    // create a bunch of Butterfly Objects in random locations
-    float randomX = random(0, width);
-    float randomY = random(0, height);
-    Butterfly b = new Butterfly(randomX, randomY);
-    butterflies.add(b); // add the butterfly to the array
-  }
+  // Create the Person whose motion we'll track
+  person = new Person();
 }
 
 void draw() {
@@ -53,5 +46,29 @@ void draw() {
   for (Butterfly b: butterflies) {
     b.display();
   }
+
+  // update the Person
+  person.update();
+  person.printDebug();
+}
+
+void createButterflies() {
+  int numButterflies = 50;
+  for (int i = 0; i < numButterflies; i++) {
+    // create a bunch of Butterfly Objects in random locations
+    float randomX = random(0, width);
+    float randomY = random(0, height);
+    Butterfly b = new Butterfly(randomX, randomY);
+    butterflies.add(b); // add the butterfly to the array
+  }
+}
+
+// helper function to calculate displacement between
+// two points
+float getDistance(float x1, float y1, float x2, float y2) {
+  float dX = x2 - x1;
+  float dY = y2 - y1;
+  float dHypotenuse = sqrt((dX * dX) + (dY * dY)); // pythagoras!
+  return dHypotenuse;
 }
 
