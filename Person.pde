@@ -15,7 +15,7 @@ class Person {
   int numVelocitiesCaptured = 0;
   
   // box2d
-  Body body;
+  // Body body;
 
   // constructor
   Person() {
@@ -104,6 +104,7 @@ class Person {
     println("Start Stillness Time " + startStillnessTime);
   }
   
+  /*
   void createBox2dObject() {
     // set width and height
     int w = 16;
@@ -169,5 +170,6 @@ class Person {
     force.mulLocal(strength); // magnitude * direction
     return force;
   }
+  */
 }
 
