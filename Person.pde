@@ -9,10 +9,13 @@ class Person {
 
   int startStillnessTime = 0;
   int stillnessDuration = 0;
+  int stillnessThreshold = 10;
   
   int timePositionWasLastSampled = 0;
   int timeBetweenSamples = 0;
   int numVelocitiesCaptured = 0;
+  
+  int numButterfliesAttracted = 0;
   
   // box2d
   // Body body;
@@ -74,6 +77,8 @@ class Person {
     } else {
       // reset stillness time
       stillnessDuration = 0;
+      // and numButterfliesAttracted
+      numButterfliesAttracted = 0;
     }
   }
 
@@ -94,6 +99,8 @@ class Person {
     println("Velocities Captured " + numVelocitiesCaptured);
     println("Stillness Duration " + stillnessDuration);
     println("Start Stillness Time " + startStillnessTime);
+    println("Number of Butterflies Attracted " + numButterfliesAttracted);
+    println("Num Bs and Stillness Thresh " + (numButterfliesAttracted*stillnessThreshold));
   }
   
   /*

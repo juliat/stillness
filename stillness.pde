@@ -23,6 +23,8 @@ void setup() {
   box2d = new PBox2D(this);
   box2d.createWorld();
   adjustBox2dWorld();
+  
+  createBoundaries();
 
   // Create the ArrayList in which we'll put butterflies
   butterflies = new ArrayList<Butterfly>();
@@ -48,9 +50,20 @@ void draw() {
   person.update();
   person.printDebug();
   
+  int randomBNum = (int)random(0, butterflies.size() - 1);
+  Butterfly randomB = butterflies.get(randomBNum);
+  
   // display all the butterflies
   for (Butterfly b: butterflies) {
-    b.update();
+    if (person.stillnessDuration > (person.stillnessThreshold * person.numButterfliesAttracted)) {
+      // attract one
+      b.attractToPoint(mouseX, mouseY);
+      person.numButterfliesAttracted++;
+    } else {
+      // repel all
+      b.repelFromPoint(mouseX, mouseY);
+    }
+    // b.update();
     b.display();
   }
 
@@ -59,7 +72,7 @@ void draw() {
 }
 
 void createButterflies() {
-  int numButterflies = 50;
+  int numButterflies = 5;
   for (int i = 0; i < numButterflies; i++) {
     // create a bunch of Butterfly Objects in random locations
     float randomX = random(0, width);
@@ -67,6 +80,14 @@ void createButterflies() {
     Butterfly b = new Butterfly(randomX, randomY);
     butterflies.add(b); // add the butterfly to the array
   }
+}
+
+void createBoundaries() {
+  int boundarySize = 10;
+  Boundary top = new Boundary(0, 0, width, boundarySize); // x, y, w, h
+  Boundary bottom = new Boundary(0, height, width, boundarySize);
+  Boundary left = new Boundary(0, 0, boundarySize, height);
+  Boundary right = new Boundary(width, 0, boundarySize, height);
 }
 
 void adjustBox2dWorld() {

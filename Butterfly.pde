@@ -17,6 +17,7 @@ class Butterfly {
     // set the position of the Box2D Body by translating x y pixels
     // to box2D world
     bodyDefinition.position.set(box2d.coordPixelsToWorld(x, y));
+    bodyDefinition.bullet = true;
     body = box2d.createBody(bodyDefinition); // actually create it
 
     // setup initial linear and angular velocities
@@ -24,7 +25,7 @@ class Butterfly {
     float randomYVelocity = random(-10,3);
     float randomAngularVelocity = random(-3, 3); 
     body.setLinearVelocity(new Vec2(randomXVelocity, randomYVelocity));
-    body.setAngularVelocity(randomAngularVelocity);
+    body.setAngularVelocity(randomAngularVelocity);   
 
     // define the shape for the Butterfly
     PolygonShape shape = new PolygonShape();
@@ -55,11 +56,6 @@ class Butterfly {
 
   void update() {
     // avoidOthers();
-    if (person.stillnessDuration > 0) {
-      attractToPoint(mouseX, mouseY);
-    } else {
-      repelFromPoint(mouseX, mouseY);
-    }
   }
   
   void attractToPoint(float x, float y) {
@@ -75,6 +71,7 @@ class Butterfly {
     // apply it to the body's center of bass
     body.applyForce(worldTarget, bodyVec);
   }
+    
   
   void repelFromPoint(float x, float y) {
     Vec2 worldTarget = box2d.coordPixelsToWorld(x,y);
@@ -84,7 +81,7 @@ class Butterfly {
     worldTarget.addLocal(bodyVec);
     // scale the vector to the specified force
     worldTarget.normalize();
-    int force = 50;
+    int force = 10;
     worldTarget.mulLocal((float) force);
     // apply it to the body's center of bass
     body.applyForce(worldTarget, bodyVec);    
