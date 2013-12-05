@@ -55,6 +55,39 @@ class Butterfly {
 
   void update() {
     // avoidOthers();
+    if (person.stillnessDuration > 0) {
+      attractToPoint(mouseX, mouseY);
+    } else {
+      repelFromPoint(mouseX, mouseY);
+    }
+  }
+  
+  void attractToPoint(float x, float y) {
+    Vec2 worldTarget = box2d.coordPixelsToWorld(x,y);
+    Vec2 bodyVec = body.getWorldCenter();
+    // find the vector going from the body (the butterfly's) going to the
+    // specified point
+    worldTarget.subLocal(bodyVec);
+    // scale the vector to the specified force
+    worldTarget.normalize();
+    int force = 50;
+    worldTarget.mulLocal((float) force);
+    // apply it to the body's center of bass
+    body.applyForce(worldTarget, bodyVec);
+  }
+  
+  void repelFromPoint(float x, float y) {
+    Vec2 worldTarget = box2d.coordPixelsToWorld(x,y);
+    Vec2 bodyVec = body.getWorldCenter();
+    // find the vector going from the body (the butterfly's) going to the
+    // specified point
+    worldTarget.addLocal(bodyVec);
+    // scale the vector to the specified force
+    worldTarget.normalize();
+    int force = 50;
+    worldTarget.mulLocal((float) force);
+    // apply it to the body's center of bass
+    body.applyForce(worldTarget, bodyVec);    
   }
   
  /* void avoidOthers() {

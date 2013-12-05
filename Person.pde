@@ -21,7 +21,7 @@ class Person {
   Person() {
     setPosition();
     update();
-    createBox2dObject();
+    // createBox2dObject();
   }
 
   // get data about the person's position
@@ -32,19 +32,11 @@ class Person {
     captureVelocity();
     updateAverageVelocity();
     setPosition();
-    
-    // if (stillnessDuration > 0) {
-      attractButterflies();
-    // }
   }
 
   void setPosition() {
     positionX = mouseX;
     positionY = mouseY;
-    
-    // set the position of the Box2D Body by translating x y pixels
-    // to box2D world
-    body.position.set(box2d.coordPixelsToWorld(positionX, positionY));
   }
 
   float getCurrentPosition(char xOrY) {
@@ -72,7 +64,7 @@ class Person {
         // record time
         startStillnessTime = millis();
         stillnessDuration = 1;
-        attractButterflies();
+      //  attractButterflies();
       // wasn't moving before
       } else {
         // update time since last motion
