@@ -2,15 +2,24 @@ class Butterfly {
   // store a reference to the Box2D physics body
   Body body;
 
-  // store width and height as floats
-  float w, h;
+  boolean delete = false;
+
+  color col;
+
+  float r;
 
   // constructor
   Butterfly(float x, float y) {
-    // set width and height
-    w = 16;
-    h = 16;
+    // set radius
+    r = 5;
 
+    // This function puts the particle in the Box2d world
+    makeBody(x, y, r);
+    body.setUserData(this);
+    col = color(175);
+  }
+
+  void makeBody(float x, float y, float r) {
     // Create a definition of what the box2d body should be
     BodyDef bodyDefinition = new BodyDef();
     bodyDefinition.type = BodyType.DYNAMIC;
@@ -20,21 +29,9 @@ class Butterfly {
     bodyDefinition.bullet = true;
     body = box2d.createBody(bodyDefinition); // actually create it
 
-    // setup initial linear and angular velocities
-    float randomXVelocity = random(-3,3);
-    float randomYVelocity = random(-10,3);
-    float randomAngularVelocity = random(-3, 3); 
-    body.setLinearVelocity(new Vec2(randomXVelocity, randomYVelocity));
-    body.setAngularVelocity(randomAngularVelocity);   
-
     // define the shape for the Butterfly
-    PolygonShape shape = new PolygonShape();
-    // in box2d, the width and height are the distance from the center to the edge,
-    // so half of the processing values for width and height
-    float box2dW = box2d.scalarPixelsToWorld(w/2);
-    float box2dH = box2d.scalarPixelsToWorld(h/2);
-
-    shape.setAsBox(box2dW, box2dH);
+    CircleShape shape = new CircleShape();
+    shape.m_radius = box2d.scalarPixelsToWorld(r);
 
     // set up a fixture to tie together the body and the shape
     FixtureDef fixtureDefinition = new FixtureDef();
@@ -47,8 +44,15 @@ class Butterfly {
 
     // attach Fixture to Body
     body.createFixture(fixtureDefinition);
+
+    // setup initial linear and angular velocities
+    float randomXVelocity = random(-3, 3);
+    float randomYVelocity = random(-10, 3);
+    float randomAngularVelocity = random(-3, 3); 
+    body.setLinearVelocity(new Vec2(randomXVelocity, randomYVelocity));
+    body.setAngularVelocity(randomAngularVelocity);
   } // end constructor
-  
+
   void applyForce(Vec2 force) {
     Vec2 position = body.getWorldCenter(); // ask the body for its center
     body.applyForce(force, position);
@@ -57,9 +61,9 @@ class Butterfly {
   void update() {
     // avoidOthers();
   }
-  
+
   void attractToPoint(float x, float y) {
-    Vec2 worldTarget = box2d.coordPixelsToWorld(x,y);
+    Vec2 worldTarget = box2d.coordPixelsToWorld(x, y);
     Vec2 bodyVec = body.getWorldCenter();
     // find the vector going from the body (the butterfly's) going to the
     // specified point
@@ -71,10 +75,10 @@ class Butterfly {
     // apply it to the body's center of bass
     body.applyForce(worldTarget, bodyVec);
   }
-    
-  
+
+
   void repelFromPoint(float x, float y) {
-    Vec2 worldTarget = box2d.coordPixelsToWorld(x,y);
+    Vec2 worldTarget = box2d.coordPixelsToWorld(x, y);
     Vec2 bodyVec = body.getWorldCenter();
     // find the vector going from the body (the butterfly's) going to the
     // specified point
@@ -84,21 +88,21 @@ class Butterfly {
     int force = 10;
     worldTarget.mulLocal((float) force);
     // apply it to the body's center of bass
-    body.applyForce(worldTarget, bodyVec);    
+    body.applyForce(worldTarget, bodyVec);
   }
-  
- /* void avoidOthers() {
-    for (Butterfly otherB: butterflies) {
-      Vec2 repulsionForce = repel(otherB);
-      otherB.applyForce(repulsionForce);
-    }
-  }
-  
-  Vec2 repel(Butterfly otherButterfly) {
-    // calculate force
-    // adjust based on distance and mass
-    
-  }*/
+
+  /* void avoidOthers() {
+   for (Butterfly otherB: butterflies) {
+   Vec2 repulsionForce = repel(otherB);
+   otherB.applyForce(repulsionForce);
+   }
+   }
+   
+   Vec2 repel(Butterfly otherButterfly) {
+   // calculate force
+   // adjust based on distance and mass
+   
+   }*/
 
   // draw a butterfly!
   void display() {
@@ -114,16 +118,40 @@ class Butterfly {
     rotate(-angle);
 
     // colors
-    fill(127);
+    fill(col);
     stroke(0);
-    strokeWeight(2);
+    strokeWeight(1);
 
     // draw the shape
-    rectMode(CENTER); // (instead of from top left, draw from center)
-    rect(0, 0, w, h); // draw at origin, which is the shape's position
+    ellipse(0, 0, r*2, r*2);
 
     popMatrix(); // reset the canvas
   } // end display
- 
+  // This function removes the particle from the box2d world
+  void killBody() {
+    box2d.destroyBody(body);
+  }
+
+  void delete() {
+    delete = true;
+  }
+
+  // Change color when hit
+  void change() {
+    col = color(255, 0, 0);
+  }
+
+  // Is the particle ready for deletion?
+  // Is the particle ready for deletion?
+  boolean done() {
+    // Let's find the screen position of the particle
+    Vec2 pos = box2d.getBodyPixelCoord(body);
+    // Is it off the bottom of the screen?
+    if (pos.y > height+r*2 || delete) {
+      killBody();
+      return true;
+    }
+    return false;
+  }
 } // end class  
 

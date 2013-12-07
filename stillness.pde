@@ -2,15 +2,21 @@
 
 // for the butterflies and modelling a person
 import pbox2d.*;
+import org.jbox2d.common.*;
+import org.jbox2d.dynamics.joints.*;
 import org.jbox2d.collision.shapes.*;
+import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.*;
 import org.jbox2d.dynamics.*;
+import org.jbox2d.dynamics.contacts.*;
 
 // create a reference to the box2d world
 PBox2D box2d;
 // make an reference to an arraylist for or Butterfly Objects
 ArrayList<Butterfly> butterflies;
 Person person;
+
+ArrayList<Boundary> boundaries;
 
 void setup() {
   // setup window
@@ -24,11 +30,16 @@ void setup() {
   box2d.createWorld();
   adjustBox2dWorld();
   
-  createBoundaries();
+  box2d.listenForCollisions();
+  
+  
 
   // Create the ArrayList in which we'll put butterflies
   butterflies = new ArrayList<Butterfly>();
-
+ 
+  boundaries = new ArrayList<Boundary>();
+  createBoundaries();
+  
   // Create the Person whose motion we'll track
   person = new Person();
 }
@@ -40,6 +51,9 @@ void draw() {
 
   // step the box2D world through time
   box2d.step();
+
+  // draw boundaries
+  displayBoundaries();
 
   // if there are no butterflies, ake them
   if ((butterflies == null) || (butterflies.size() < 1)) {
@@ -68,7 +82,7 @@ void draw() {
   }
 
   // update the Person
-
+  
 }
 
 void createButterflies() {
@@ -84,10 +98,20 @@ void createButterflies() {
 
 void createBoundaries() {
   int boundarySize = 10;
-  Boundary top = new Boundary(0, 0, width, boundarySize); // x, y, w, h
-  Boundary bottom = new Boundary(0, height, width, boundarySize);
-  Boundary left = new Boundary(0, 0, boundarySize, height);
-  Boundary right = new Boundary(width, 0, boundarySize, height);
+  Boundary top = new Boundary(width/2, 0, width, boundarySize); // x, y, w, h relative to center
+  boundaries.add(top);
+  Boundary bottom = new Boundary(width/2, height, width, boundarySize);
+  boundaries.add(bottom);
+  Boundary left = new Boundary(0, height/2, boundarySize, height);
+  boundaries.add(left);
+  Boundary right = new Boundary(width, height/2, boundarySize, height);
+  boundaries.add(right);
+}
+
+void displayBoundaries() {
+  for (Boundary b: boundaries) {
+    b.display();
+  }
 }
 
 void adjustBox2dWorld() {
@@ -104,3 +128,40 @@ float getDistance(float x1, float y1, float x2, float y2) {
   return dHypotenuse;
 }
 
+
+
+// Collision event functions!
+void beginContact(Contact cp) {
+  // Get both shapes
+  Fixture f1 = cp.getFixtureA();
+  Fixture f2 = cp.getFixtureB();
+  // Get both bodies
+  Body body1 = f1.getBody();
+  Body body2 = f2.getBody();
+
+  // Get our objects that reference these bodies
+  Object o1 = body1.getUserData();
+  Object o2 = body2.getUserData();
+
+  if (o1.getClass() == Butterfly.class && o2.getClass() == Butterfly.class) {
+    Butterfly b1 = (Butterfly) o1;
+    b1.delete();
+    Butterfly b2 = (Butterfly) o2;
+    b2.delete();
+  }
+
+  if (o1.getClass() == Boundary.class) {
+    Butterfly b = (Butterfly) o2;
+    b.change();
+  }
+  if (o2.getClass() == Boundary.class) {
+    Butterfly b = (Butterfly) o1;
+    b.change();
+  }
+
+
+}
+
+// Objects stop touching each other
+void endContact(Contact cp) {
+}
