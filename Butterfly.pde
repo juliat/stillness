@@ -70,8 +70,6 @@ class Butterfly {
     worldTarget.subLocal(bodyVec);
     // scale the vector to the specified force
     worldTarget.normalize();
-    int force = 50;
-    worldTarget.mulLocal((float) force);
     // apply it to the body's center of bass
     body.applyForce(worldTarget, bodyVec);
   }
@@ -85,7 +83,7 @@ class Butterfly {
     worldTarget.addLocal(bodyVec);
     // scale the vector to the specified force
     worldTarget.normalize();
-    int force = 10;
+    int force = 1;
     worldTarget.mulLocal((float) force);
     // apply it to the body's center of bass
     body.applyForce(worldTarget, bodyVec);

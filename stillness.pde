@@ -31,8 +31,6 @@ void setup() {
   adjustBox2dWorld();
   
   box2d.listenForCollisions();
-  
-  
 
   // Create the ArrayList in which we'll put butterflies
   butterflies = new ArrayList<Butterfly>();
@@ -69,14 +67,13 @@ void draw() {
   
   // display all the butterflies
   for (Butterfly b: butterflies) {
-    if (person.stillnessDuration > (person.stillnessThreshold * person.numButterfliesAttracted)) {
-      // attract one
+    //if (person.stillnessDuration > (person.stillnessThreshold * person.numButterfliesAttracted)) {
       b.attractToPoint(mouseX, mouseY);
       person.numButterfliesAttracted++;
-    } else {
+   /* } else {
       // repel all
       b.repelFromPoint(mouseX, mouseY);
-    }
+    }*/
     // b.update();
     b.display();
   }
