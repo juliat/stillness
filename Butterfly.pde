@@ -8,6 +8,8 @@ class Butterfly {
 
   float r;
 
+  boolean windDirection = true;
+
   // constructor
   Butterfly(float x, float y) {
     // set radius
@@ -39,7 +41,7 @@ class Butterfly {
 
     // assign physics-related parameters
     fixtureDefinition.density = 1;
-    fixtureDefinition.friction = 0.3;
+    fixtureDefinition.friction = 0.5;
     fixtureDefinition.restitution = 0.5;
 
     // attach Fixture to Body
@@ -70,10 +72,37 @@ class Butterfly {
     worldTarget.subLocal(bodyVec);
     // scale the vector to the specified force
     worldTarget.normalize();
+    
     // apply it to the body's center of bass
     body.applyForce(worldTarget, bodyVec);
   }
 
+  void applyWind() {
+    Vec2 position = box2d.getBodyPixelCoord(body);
+    float randomX = random(0, width);
+    float randomY = random(0, height);
+    float flipY = mouseY + random(0,30);
+    
+    if (windDirection == false) {
+      flipY = mouseY + (-30,0);
+    }
+    
+    Vec2 worldTarget = box2d.coordPixelsToWorld(position.x, flipY);
+    Vec2 bodyVec = body.getWorldCenter();
+    // find the vector going from the body (the butterfly's) going to the
+    // specified point
+    worldTarget.subLocal(bodyVec);
+    // scale the vector to the specified force
+    worldTarget.normalize();
+    
+    // apply it to the body's center of bass
+    body.applyForce(worldTarget, bodyVec);
+    
+    // apply it to the body's center of bass
+    body.applyForce(worldTarget, bodyVec);
+    
+    windDirection = !windDirection;
+  }
 
   void repelFromPoint(float x, float y) {
     Vec2 worldTarget = box2d.coordPixelsToWorld(x, y);

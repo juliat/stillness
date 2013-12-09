@@ -18,6 +18,9 @@ Person person;
 
 ArrayList<Boundary> boundaries;
 
+int numFrames = 0;
+boolean applyWind = false;
+
 void setup() {
   // setup window
   int windowWidth = 640;
@@ -62,6 +65,10 @@ void draw() {
   person.update();
   person.printDebug();
   
+  if (numFrames%2 == 0) {
+    applyWind = !applyWind;
+  }
+  
   int randomBNum = (int)random(0, butterflies.size() - 1);
   Butterfly randomB = butterflies.get(randomBNum);
   
@@ -74,10 +81,12 @@ void draw() {
       // repel all
       b.repelFromPoint(mouseX, mouseY);
     }*/
-    // b.update();
+    if (applyWind) {
+      b.applyWind();
+    }
     b.display();
   }
-
+  numFrames++;
   // update the Person
   
 }
